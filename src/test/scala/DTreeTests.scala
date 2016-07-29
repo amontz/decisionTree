@@ -50,4 +50,38 @@ class DTreeTests extends FunSuite {
     val d = Vector(d1, d2, d3, d4)
     assert(fit(d) === Branch(Leaf(1.0), Leaf(2.0), (1, 1)))
   }
+
+  test("predict stumps") {
+    val lLeaf = Leaf(0.0)
+    val rLeaf = Leaf(1.0)
+    val root = Branch(lLeaf, rLeaf, (2, 1))
+
+    val record1 = Vector(0, 1, 0)
+    assert(predict(record1, root) == 1.0)
+
+    val record2 = Vector(0, 1, 1)
+    assert(predict(record2, root) == 0.0)
+  }
+
+  test("predict 2-level") {
+    val llLeaf = Leaf(0.0)
+    val lrLeaf = Leaf(1.0/3.0)
+    val lNode = Branch(llLeaf, lrLeaf, (2,1))
+    val rlLeaf = Leaf(2.0/3.0)
+    val rrLeaf = Leaf(1.0)
+    val rNode = Branch(rlLeaf, rrLeaf, (0,0))
+    val root = Branch(lNode, rNode, (1,2))
+
+    val record1 = Vector(0, 2, 1)
+    assert(predict(record1, root) == 0.0)
+
+    val record2 = Vector(0, 2, 0)
+    assert(predict(record2, root) == 1.0/3.0)
+
+    val record3 = Vector(0, 0, 1)
+    assert(predict(record3, root) == 2.0/3.0)
+
+    val record4 = Vector(1, 1, 0)
+    assert(predict(record4, root) == 1.0)
+  }
 }

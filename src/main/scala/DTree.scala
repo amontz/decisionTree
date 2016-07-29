@@ -10,6 +10,14 @@ case class Branch[A](left: DTree[A], right: DTree[A], split: (Int, Int)) extends
 
 object DTree {
 
+  def predict(record: Vector[Int], dt: DTree[Double]):Double = dt match {
+    case Leaf(x) => x
+    case Branch(l, r, s) => {
+      if (record(s._1) == s._2) predict(record, l)
+      else predict(record, r)
+    }
+  }
+
   def fit(data: Vector[Vector[Int]]): DTree[Double] = fit(data, 8)
 
   def fit(data: Vector[Vector[Int]], depth: Int): DTree[Double] = {
@@ -26,10 +34,6 @@ object DTree {
   }
 
   def mean(v: Vector[Int]): Double = v.foldLeft(0)(_ + _) / v.length.toDouble
-
-  /*def predict(data: Vector[Vector[Int]], dt: DTree[Double]) = match dt {
-    case Leaf(x) => x
-  }*/
 
   /** 
     * Return a tuple of the best (feature index, level of that feature index)
