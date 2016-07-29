@@ -2,11 +2,24 @@ package decisionTree
 
 import math.log
 
-// type split = (Int, Int) : (feature, value) = (index, level)
-
 sealed trait DTree[+A]
 case class Leaf[A](value: A) extends DTree[A]
 case class Branch[A](left: DTree[A], right: DTree[A], split: (Int, Int)) extends DTree[A]
+
+/**
+  * Data has m features and a target.
+  * It is specifed as a m x n desgin matrix of the form:
+  * 
+  * | x_11 x_12 ... x_1n y_1 |
+  * | x_21 x_22 ... x_2n y_2 |
+  * | ...                    |
+  * | x_m1 x_m2 ... x_mn y_m |
+  * 
+  * A split (i,j) is the sub-matricies:
+  * L = x_ri = j and R = x_ri != j for all rows 1 <= r <= m
+  * 
+  * A record to score is a Vector of the m-features: (x_1, x_2, ..., x_3)
+  */
 
 object DTree {
 
@@ -23,13 +36,13 @@ object DTree {
   def fit(data: Vector[Vector[Int]], depth: Int): DTree[Double] = {
     if (depth == 0) Leaf(mean(data.map(r => r.last)))
     else {
-      val split = getSplit(data)
-      val (ls, rs) = data.partition(r => r(split._1) == split._2)
+      val (feature, level) = getSplit(data)
+      val (ls, rs) = data.partition(r => r(feature) == level)
       lazy val lt = ls.map(r => r.last)
       lazy val rt = rs.map(r => r.last)
       lazy val l = if (entropy(lt) == 0) Leaf(mean(lt)) else fit(ls, depth-1)
       lazy val r = if (entropy(rt) == 0) Leaf(mean(rt)) else fit(rs, depth-1)
-      Branch(l, r, split)
+      Branch(l, r, (feature, level))
     }
   }
 
