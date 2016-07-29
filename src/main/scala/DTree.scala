@@ -1,4 +1,4 @@
-package randomForest
+package decisionTree
 
 import math.log
 
@@ -15,21 +15,33 @@ object DTree {
     Leaf(1.0) // remove
   }
 
+  /** 
+    * Return a tuple of the best (feature index, level of that feature index)
+    */
   def getSplit(data: Vector[Vector[Int]]): (Int, Int) = {
-    (0,0)
+    val idx = 0 until data.length - 1
+    val s = idx.map(i => (i, bestSplitFeature(data.map(r => Vector(r(i), r.last)))))
+              .maxBy(_._2._2) // (feature, (level, infoGain))
+    (s._1, s._2._1)           // drop info gain
   }
 
-  def bestSplitFeature(v: Vector[Int]): (Int, Double) = {
-    v.distinct
-     .map(l => (l, infoGain(v, v.partition(a => a == l))))
+  /** 
+    * Return a tuple of the best (level of this feature index, info gain)
+    * 
+    *  v: n x 2 matrix. First col is feature, second is target
+    */
+  def bestSplitFeature(v: Vector[Vector[Int]]): (Int, Double) = {
+    v.map(r => r(0)).distinct
+     .map(l => (l, v.partition(r => r(0) == l))) // Vector(tuples(Vector(Vector)))!
+     .map(t => (t._1, infoGain(v.map(r => r.last), t._2._1.map(r => r.last), t._2._2.map(r => r.last))))
      .maxBy(_._2)
   }
-
-  def infoGain(p: Vector[Int], c: (Vector[Int], Vector[Int])): Double = {
+ 
+  def infoGain(p: Vector[Int], c1: Vector[Int], c2: Vector[Int]): Double = {
     val n = p.length.toDouble
 
     //TODO: no map for tuple, how to better handle this?
-    entropy(p) - c._1.length.toDouble/n*entropy(c._1) - c._2.length.toDouble/n*entropy(c._2)
+    entropy(p) - c1.length.toDouble/n*entropy(c1) - c2.length.toDouble/n*entropy(c2)
   }
 
   def entropy(v: Vector[Int]): Double = {

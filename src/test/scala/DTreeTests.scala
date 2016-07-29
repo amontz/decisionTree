@@ -1,4 +1,4 @@
-package randomForest
+package decisionTree
 
 import org.scalatest.FunSuite
 
@@ -19,10 +19,15 @@ class DTreeTests extends FunSuite {
   }
 
   test("info gain") {
-    assert(infoGain(Vector(0,1,0,1), (Vector(0,0), Vector(1,1))) == 1.0)
+    assert(infoGain(Vector(0,1,0,1), Vector(0,0), Vector(1,1)) == 1.0)
   }
 
   test("best split for a feature") {
-    assert(bestSplitFeature(Vector(0,0,1)) == (0, 0.9182958340544896))
+    assert(bestSplitFeature(Vector(Vector(0,0), Vector(1,1), Vector(2,1))) == (0, 0.9182958340544896))
+  }
+
+  test("get split") {
+    assert(getSplit(Vector(Vector(0,1,0), Vector(1,0,1), Vector(2,1,1))) == (0, 0))
+    assert(getSplit(Vector(Vector(1,0,0), Vector(0,1,1), Vector(1,2,1))) == (1, 0))
   }
 }
