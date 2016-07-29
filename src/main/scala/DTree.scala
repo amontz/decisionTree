@@ -10,10 +10,26 @@ case class Branch[A](left: DTree[A], right: DTree[A], split: (Int, Int)) extends
 
 object DTree {
 
-  def fit(data: Vector[Vector[Int]]): DTree[Double] = {
-    val split = getSplit(data)
-    Leaf(1.0) // remove
+  def fit(data: Vector[Vector[Int]]): DTree[Double] = fit(data, 8)
+
+  def fit(data: Vector[Vector[Int]], depth: Int): DTree[Double] = {
+    if (depth == 0) Leaf(mean(data.map(r => r.last)))
+    else {
+      val split = getSplit(data)
+      val (ls, rs) = data.partition(r => r(split._1) == split._2)
+      lazy val lt = ls.map(r => r.last)
+      lazy val rt = rs.map(r => r.last)
+      lazy val l = if (entropy(lt) == 0) Leaf(mean(lt)) else fit(ls, depth-1)
+      lazy val r = if (entropy(rt) == 0) Leaf(mean(rt)) else fit(rs, depth-1)
+      Branch(l, r, split)
+    }
   }
+
+  def mean(v: Vector[Int]): Double = v.foldLeft(0)(_ + _) / v.length.toDouble
+
+  /*def predict(data: Vector[Vector[Int]], dt: DTree[Double]) = match dt {
+    case Leaf(x) => x
+  }*/
 
   /** 
     * Return a tuple of the best (feature index, level of that feature index)

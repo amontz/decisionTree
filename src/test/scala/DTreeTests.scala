@@ -30,4 +30,10 @@ class DTreeTests extends FunSuite {
     assert(getSplit(Vector(Vector(0,1,0), Vector(1,0,1), Vector(2,1,1))) == (0, 0))
     assert(getSplit(Vector(Vector(1,0,0), Vector(0,1,1), Vector(1,2,1))) == (1, 0))
   }
+
+  test("mean") {
+    assert(mean(Vector(0,0,0)) == 0)
+    assert(mean(Vector(-1,0,1)) == 0)
+    assert(mean(Vector(1,2,3)) == 2)
+  }
 }
