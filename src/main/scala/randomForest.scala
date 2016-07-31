@@ -1,7 +1,7 @@
 package decisionTree
 
 import math._
-import util.Random.shuffle
+import util.Random._
 
 object RandomForest {
 
@@ -29,8 +29,11 @@ object RandomForest {
     (0 until ntree).map(i => DTree.fit(subSample(data, sampSize), depth, mtry)).toList
   }
 
+  /**
+    * Return a subsample of data, with sampSize rows, with replacement
+    */
   def subSample(data: Vector[Vector[Int]], sampSize: Int): Vector[Vector[Int]] = {
-    shuffle((0 until data.length).toList).take(sampSize).sorted
+    Seq.fill(sampSize)(nextInt(data.length)).sorted
     .map(i => data(i)).toVector
   }
 
