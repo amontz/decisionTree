@@ -1,6 +1,8 @@
 package decisionTree
 
-import math.log
+import math._
+import util.Random.nextInt
+import util.Random.shuffle
 
 sealed trait DTree[+A]
 case class Leaf[A](value: A) extends DTree[A]
@@ -31,15 +33,20 @@ object DTree {
     }
   }
 
+  // TODO: handle args in a more functional way
   def fit(data: Vector[Vector[Int]], depth: Int=8): DTree[Double] = {
+    fit(data, data.length-1, depth)
+  }
+
+  def fit(data: Vector[Vector[Int]], mtry: Int, depth: Int): DTree[Double] = {
     if (depth == 0) Leaf(mean(data.map(r => r.last)))
     else {
-      val (feature, level) = bestSplit(data)
+      val (feature, level) = bestSplit(data, mtry)
       val (ls, rs) = data.partition(r => r(feature) == level)
       lazy val lt = ls.map(r => r.last)
       lazy val rt = rs.map(r => r.last)
-      lazy val l = if (entropy(lt) == 0) Leaf(mean(lt)) else fit(ls, depth-1)
-      lazy val r = if (entropy(rt) == 0) Leaf(mean(rt)) else fit(rs, depth-1)
+      lazy val l = if (entropy(lt) == 0) Leaf(mean(lt)) else fit(ls, mtry, depth-1)
+      lazy val r = if (entropy(rt) == 0) Leaf(mean(rt)) else fit(rs, mtry, depth-1)
       Branch(l, r, (feature, level))
     }
   }
@@ -49,8 +56,8 @@ object DTree {
   /** 
     * Return a tuple of the best (feature index, level of that feature index)
     */
-  def bestSplit(data: Vector[Vector[Int]]): (Int, Int) = {
-    val featLvlGain = (0 until data.length - 1)
+  def bestSplit(data: Vector[Vector[Int]], mtry: Int): (Int, Int) = {
+    val featLvlGain = shuffle((0 until data.length - 1).toList).take(mtry)
                       .map(i => i -> bestSplitFeature(data.map(r => Vector(r(i), r.last)))).toMap
                       .maxBy(_._2._2)   // (feature, (level, infoGain))
 
