@@ -26,9 +26,9 @@ class DTreeTests extends FunSuite {
     assert(bestSplitFeature(Vector(Vector(0,0), Vector(1,1), Vector(2,1))) == (0, 0.9182958340544896))
   }
 
-  test("get split") {
-    assert(getSplit(Vector(Vector(0,1,0), Vector(1,0,1), Vector(2,1,1))) == (0, 0))
-    assert(getSplit(Vector(Vector(1,0,0), Vector(0,1,1), Vector(1,2,1))) == (1, 0))
+  test("best split") {
+    assert(bestSplit(Vector(Vector(0,1,0), Vector(1,0,1), Vector(2,1,1))) == (0, 0))
+    assert(bestSplit(Vector(Vector(1,0,0), Vector(0,1,1), Vector(1,2,1))) == (1, 0))
   }
 
   test("mean") {

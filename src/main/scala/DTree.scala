@@ -36,7 +36,7 @@ object DTree {
   def fit(data: Vector[Vector[Int]], depth: Int): DTree[Double] = {
     if (depth == 0) Leaf(mean(data.map(r => r.last)))
     else {
-      val (feature, level) = getSplit(data)
+      val (feature, level) = bestSplit(data)
       val (ls, rs) = data.partition(r => r(feature) == level)
       lazy val lt = ls.map(r => r.last)
       lazy val rt = rs.map(r => r.last)
@@ -51,11 +51,12 @@ object DTree {
   /** 
     * Return a tuple of the best (feature index, level of that feature index)
     */
-  def getSplit(data: Vector[Vector[Int]]): (Int, Int) = {
-    val idx = 0 until data.length - 1
-    val s = idx.map(i => (i, bestSplitFeature(data.map(r => Vector(r(i), r.last)))))
-              .maxBy(_._2._2) // (feature, (level, infoGain))
-    (s._1, s._2._1)           // drop info gain
+  def bestSplit(data: Vector[Vector[Int]]): (Int, Int) = {
+    val featLvlGain = (0 until data.length - 1)
+                      .map(i => i -> bestSplitFeature(data.map(r => Vector(r(i), r.last)))).toMap
+                      .maxBy(_._2._2)   // (feature, (level, infoGain))
+
+    (featLvlGain._1, featLvlGain._2._1) // drop info gain, return (feature, level)
   }
 
   /** 
@@ -65,8 +66,8 @@ object DTree {
     */
   def bestSplitFeature(v: Vector[Vector[Int]]): (Int, Double) = {
     v.map(r => r(0)).distinct
-     .map(l => (l, v.partition(r => r(0) == l))) // Vector(tuples(Vector(Vector)))!
-     .map(t => (t._1, infoGain(v.map(r => r.last), t._2._1.map(r => r.last), t._2._2.map(r => r.last))))
+     .map(l => l -> v.partition(r => r(0) == l)).toMap
+     .mapValues(p => infoGain(v.map(r => r.last), p._1.map(r => r.last), p._2.map(r => r.last)))
      .maxBy(_._2)
   }
  
