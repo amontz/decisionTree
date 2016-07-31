@@ -4,6 +4,7 @@ import org.scalatest.FunSuite
 
 import DTree._
 import math._
+import util.Random
 
 class DTreeTests extends FunSuite {
 
@@ -29,6 +30,12 @@ class DTreeTests extends FunSuite {
   test("best split") {
     assert(bestSplit(Vector(Vector(0,1,0), Vector(1,0,1), Vector(2,1,1)), 2) == (0, 0))
     assert(bestSplit(Vector(Vector(1,0,0), Vector(0,1,1), Vector(1,2,1)), 2) == (1, 0))
+  }
+
+  test("sub sample of matrix rows") {
+    Random.setSeed(42)
+    val d = Vector(Vector(1,2,3,4), Vector(5,6,7,8), Vector(9,10,11,12))
+    assert(subSample(d, 2) == Vector(Vector(1,2,3,4), Vector(5,6,7,8)))
   }
 
   test("mean") {
