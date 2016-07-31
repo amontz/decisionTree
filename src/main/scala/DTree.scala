@@ -31,9 +31,7 @@ object DTree {
     }
   }
 
-  def fit(data: Vector[Vector[Int]]): DTree[Double] = fit(data, 8)
-
-  def fit(data: Vector[Vector[Int]], depth: Int): DTree[Double] = {
+  def fit(data: Vector[Vector[Int]], depth: Int=8): DTree[Double] = {
     if (depth == 0) Leaf(mean(data.map(r => r.last)))
     else {
       val (feature, level) = bestSplit(data)
