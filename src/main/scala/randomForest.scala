@@ -1,5 +1,6 @@
 package decisionTree
 
+import math._
 import util.Random.shuffle
 
 object RandomForest {
@@ -10,7 +11,18 @@ object RandomForest {
 
   def randomForest(data: Vector[Vector[Int]],
                    ntree: Int=1,
-                   depth: Int=8,
+                   depth: Int=8): List[DTree[Double]] = {
+
+    val nrow = data.length
+    val ncol = data(0).length - 1
+    val mtry = floor(pow(ncol, 0.5)).toInt
+    val sampSize = ceil(0.632*nrow).toInt
+    randomForest(data, ntree, depth, mtry, sampSize)
+  }
+
+  def randomForest(data: Vector[Vector[Int]],
+                   ntree: Int,
+                   depth: Int,
                    mtry: Int,
                    sampSize: Int): List[DTree[Double]] = {
 
