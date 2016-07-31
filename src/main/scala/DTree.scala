@@ -36,29 +36,23 @@ object DTree {
   // TODO: handle args in a more functional way
   def fit(data: Vector[Vector[Int]], depth: Int=8): DTree[Double] = {
     val ncol = data(0).length - 1
-    val nrow = data.length
-    fit(data, depth, ncol, nrow)
+    fit(data, depth, ncol)
   }
 
-  def fit(data: Vector[Vector[Int]], depth: Int,  mtry: Int, sampSize: Int): DTree[Double] = {
+  def fit(data: Vector[Vector[Int]], depth: Int, mtry: Int): DTree[Double] = {
     if (depth == 0) Leaf(mean(data.map(r => r.last)))
     else {
-      val (feature, level) = bestSplit(subSample(data, sampSize), mtry)
+      val (feature, level) = bestSplit(data, mtry)
       val (ls, rs) = data.partition(r => r(feature) == level)
       lazy val lt = ls.map(r => r.last)
       lazy val rt = rs.map(r => r.last)
-      lazy val l = if (entropy(lt) == 0) Leaf(mean(lt)) else fit(ls, depth-1, mtry, sampSize)
-      lazy val r = if (entropy(rt) == 0) Leaf(mean(rt)) else fit(rs, depth-1, mtry, sampSize)
+      lazy val l = if (entropy(lt) == 0) Leaf(mean(lt)) else fit(ls, depth-1, mtry)
+      lazy val r = if (entropy(rt) == 0) Leaf(mean(rt)) else fit(rs, depth-1, mtry)
       Branch(l, r, (feature, level))
     }
   }
 
   def mean(v: Vector[Int]): Double = v.foldLeft(0)(_ + _) / v.length.toDouble
-
-  def subSample(data: Vector[Vector[Int]], sampSize: Int): Vector[Vector[Int]] = {
-    shuffle((0 until data.length).toList).take(sampSize).sorted
-    .map(i => data(i)).toVector
-  }
 
   /** 
     * Return a tuple of the best (feature index, level of that feature index)

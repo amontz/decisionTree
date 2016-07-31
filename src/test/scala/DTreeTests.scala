@@ -32,12 +32,6 @@ class DTreeTests extends FunSuite {
     assert(bestSplit(Vector(Vector(1,0,0), Vector(0,1,1), Vector(1,2,1)), 2) == (1, 0))
   }
 
-  test("sub sample of matrix rows") {
-    Random.setSeed(42)
-    val d = Vector(Vector(1,2,3,4), Vector(5,6,7,8), Vector(9,10,11,12))
-    assert(subSample(d, 2) == Vector(Vector(1,2,3,4), Vector(5,6,7,8)))
-  }
-
   test("mean") {
     assert(mean(Vector(0,0,0)) == 0)
     assert(mean(Vector(-1,0,1)) == 0)
