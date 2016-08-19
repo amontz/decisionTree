@@ -52,7 +52,10 @@ object DTree {
     }
   }
 
-  def mean(v: Vector[Int]): Double = v.foldLeft(0)(_ + _) / v.length.toDouble
+  def mean(v: Vector[Int]): Double = {
+    if (v.length.toDouble == 0) 0.0
+    else v.foldLeft(0.0)(_ + _) / v.length.toDouble
+  }
 
   /** 
     * Return a tuple of the best (feature index, level of that feature index)

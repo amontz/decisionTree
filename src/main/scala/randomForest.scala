@@ -37,5 +37,8 @@ object RandomForest {
     .map(i => data(i)).toVector
   }
 
-  def mean(v: List[Double]): Double = v.foldLeft(0.0)(_ + _) / v.length.toDouble
+  def mean(v: List[Double]): Double = {
+    if (v.length.toDouble == 0) 0.0
+    else v.foldLeft(0.0)(_ + _) / v.length.toDouble
+  }
 }
