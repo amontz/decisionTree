@@ -5,6 +5,10 @@ import util.Random._
 
 object RandomForest {
 
+  def predict(mat: Vector[Vector[Int]], rf: List[DTree[Double]]): Vector[Double] = {
+    mat.map(r => predict(r, rf))
+  }
+
   def predict(record: Vector[Int], rf: List[DTree[Double]]):Double = {
     mean(rf.map(dt => DTree.predict(record, dt)))
   }
