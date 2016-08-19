@@ -32,6 +32,13 @@ class DTreeTests extends FunSuite {
     assert(bestSplit(Vector(Vector(1,0,0), Vector(0,1,1), Vector(1,2,1)), 2) == (1, 0))
   }
 
+  test("randnSorted") {
+    assert(randnSorted(1, 1) == List(0))
+    assert(randnSorted(5, 5) == List(0,1,2,3,4))
+    Random.setSeed(42)
+    assert(randnSorted(10, 3) == List(2,4,6))
+  }
+
   test("mean") {
     assert(mean(Vector(0,0,0)) == 0)
     assert(mean(Vector(-1,0,1)) == 0)

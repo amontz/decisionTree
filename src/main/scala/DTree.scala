@@ -58,12 +58,17 @@ object DTree {
     * Return a tuple of the best (feature index, level of that feature index)
     */
   def bestSplit(data: Vector[Vector[Int]], mtry: Int): (Int, Int) = {
-    val featLvlGain = shuffle((0 until data.length - 1).toList).take(mtry).sorted
+    val featLvlGain = randnSorted(data.length-1, mtry)
                       .map(i => i -> bestSplitFeature(data.map(r => Vector(r(i), r.last)))).toMap
                       .maxBy(_._2._2)   // (feature, (level, infoGain))
 
     (featLvlGain._1, featLvlGain._2._1) // drop info gain, return (feature, level)
   }
+
+  /**
+    * Return a length k list of sorted random numbers from 0 to n-1
+    */
+  def randnSorted(n: Int, k: Int): List[Int] = shuffle((0 until n).toList).take(k).sorted
 
   /** 
     * Return a tuple of the best (level of this feature index, info gain)
